@@ -1,0 +1,261 @@
+Guide to create a game:
+Below is a fully revised and comprehensive prompt guide for developing “Galaxy Wanderer,” a 2D top-down space exploration roguelike game. This guide integrates the inferred features from the “Star Dust Voyager” repository at https://github.com/Markussak/star-dust-voyager-game.git with the extended specifications for “Galaxy Wanderer,” emphasizing complex, realistic pixel art visuals, an expanded galaxy of at least 100 star systems, larger celestial bodies with realistic spacing, and cross-platform controls for PC and mobile environments. The guide has been expanded with additional options, types, functions, and detailed mechanics to create a rich, immersive experience suitable for an AI agent to implement.
+
+Comprehensive Prompt Guide for “Galaxy Wanderer” Game
+This prompt guide is tailored to develop “Galaxy Wanderer,” a 2D top-down space exploration roguelike game, building on the inferred structure and functionalities of the “Star Dust Voyager” repository at https://github.com/Markussak/star-dust-voyager-game.git. It combines the repository’s architecture with enhanced specifications for visuals, scale, controls, and gameplay depth, providing a detailed blueprint for an AI agent to create a visually stunning, expansive, and accessible game.
+Repository Structure (Inferred)
+The repository provides the foundation for implementation:
+	•	client/: Frontend code for a web application.
+	•	public/: Static assets (e.g., audio, images, sprite sheets).
+	•	src/: Source code, including:
+	•	components/: React-based UI elements (e.g., HUD, menus).
+	•	game/: Core game logic, with subdirectories:
+	•	assets/: Procedural and static asset generation/loading.
+	•	components/: ECS components (e.g., Position, Health).
+	•	data/: Static/procedural data (e.g., planet types, missions).
+	•	systems/: ECS systems (e.g., physics, rendering, combat).
+	•	stores/: State management (e.g., Zustand for game state).
+	•	types/: TypeScript definitions for type safety.
+	•	lib/: Utility functions (e.g., math, random generation).
+	•	main.tsx: Application entry point.
+	•	server/: Backend code, likely for persistence, leaderboards, or multiplayer. No README.md is present, so features are inferred and expanded upon.
+
+Game Overview
+“Galaxy Wanderer” is a 2D top-down space exploration game with roguelike elements, set in a procedurally generated galaxy of at least 100 star systems. Players pilot a customizable ship, explore vast star systems with larger, realistically spaced celestial bodies, engage in real-time combat, manage resources, trade, and uncover a central mystery about “The Nexus.” The game features:
+	•	Complex, realistic pixel art visuals inspired by Steredenn, with intricate celestial bodies, ships, and backgrounds.
+	•	Entity-Component-System (ECS) architecture for modular gameplay.
+	•	Cross-platform compatibility with intuitive controls for PC and mobile.
+	•	Deep mechanics including factions, dynamic economies, and procedural storytelling.
+
+Core Gameplay Features
+1. Procedural Galaxy Generation
+	•	Description: Generates a galaxy with 100-150 star systems (expanded for depth), each containing:
+	•	Central Star: 1 per system, varying by type (e.g., blue giant, neutron star).
+	•	Planets: 0-8, with procedurally generated visuals and features.
+	•	Asteroid Belts: 0-3, with harvestable resources (e.g., Iron, Crystal, Exotic Matter).
+	•	Moons: 0-4 per planet, with smaller-scale features (e.g., craters, ice patches).
+	•	Special Phenomena: 25% chance of unique elements like black holes, pulsars, or wormholes.
+	•	Implementation: Handled by galaxyGenerator.ts in game/, using seed-based algorithms (e.g., Perlin noise for system placement, Delaunay triangulation for warp lanes).
+	•	Types:
+	•	Galaxy Types: Spiral, elliptical, irregular, with distinct system distributions.
+	•	System Types: Core (dense, resource-rich), Rim (sparse, hazardous), Nebula (visually obscured, high phenomena).
+	•	Functions:
+	•	generateGalaxy(seed: number): Galaxy: Creates galaxy with systems and warp lanes.
+	•	generateSystem(id: string, type: SystemType): System: Populates a system with celestial bodies.
+	•	calculateWarpLanes(systems: System[]): WarpLane[]: Connects systems for navigation.
+	•	Details:
+	•	Galaxy size: 5000x5000 units.
+	•	Planets orbit 500-2000 pixels from stars, moons 50-200 pixels from planets.
+	•	Systems vary in hostility, resources, and faction control.
+2. Ship Navigation and Control
+	•	Description: Thrust-based physics for ship movement, including:
+	•	Acceleration, rotation, braking, boosting, warping, and emergency maneuvers (e.g., barrel roll).
+	•	Implementation: Logic in systems/physics.ts, handling inertia, velocity, and collision detection (e.g., quadtree for efficiency).
+	•	Controls:
+	•	PC:
+	•	Keyboard: WASD (movement), Q/E or mouse (rotation), Spacebar (boost), Shift (brake), Left-click (primary fire), Right-click (secondary fire), R (special ability), F (interact).
+	•	Gamepad Support: Analog sticks for movement/aiming, triggers for firing.
+	•	Mobile:
+	•	Touch: Dual virtual joysticks (left: movement, right: aiming), buttons for boost/fire, swipe for special maneuvers, pinch for map zoom.
+	•	Gestures: Double-tap (interact), long-press (scan).
+	•	Options: Adjustable sensitivity, customizable bindings, auto-aim toggle for mobile.
+	•	Functions:
+	•	handleInput(state: InputState, ship: Entity): void: Processes inputs and updates ship velocity.
+	•	applyPhysics(entities: Entity[], delta: number): void: Updates positions with inertia and friction.
+	•	warpToSystem(ship: Entity, target: System): boolean: Initiates warp, consuming fuel.
+	•	Details: Realistic spacing requires strategic fuel use, balanced for 10-30 seconds travel time between planets.
+3. Resource Management
+	•	Description: Players manage:
+	•	Fuel: Powers movement and warping (e.g., 1 unit/second for thrust, 50 units/warp).
+	•	Energy: Fuels weapons, shields, and utility systems.
+	•	Hull Integrity: Ship health (0-100%), repairable at stations.
+	•	Cargo: Limited capacity for resources (e.g., Iron, Crystal, Exotic Matter, Alien Artifacts).
+	•	Credits: Currency for trading and upgrades.
+	•	Sources: Mining, salvaging, trading, mission rewards.
+	•	Implementation: State in stores/gameStore.ts, updated by systems/resource.ts.
+	•	Types:
+	•	Resources: Common (Iron, Crystal), Rare (Exotic Matter), Unique (Artifacts).
+	•	Cargo Modules: Standard (100 units), Expanded (200 units), Specialized (boosts specific resource storage).
+	•	Functions:
+	•	mineResource(entity: Entity, target: CelestialBody): Resource: Extracts resources from asteroids/planets.
+	•	updateResources(ship: Entity, delta: number): void: Manages fuel/energy consumption.
+	•	tradeResources(station: Station, items: Resource[]): Transaction: Handles buy/sell with dynamic prices.
+	•	Details: Fuel management is critical over larger distances, with stations offering refueling.
+4. Ship Customization
+	•	Description: Modular ship upgrades for:
+	•	Weapons: Lasers, missiles, plasma cannons, EMP blasts.
+	•	Shields: Directional (front-heavy), regenerative, or absorbing.
+	•	Engines: High-thrust, fuel-efficient, or stealth.
+	•	Utility Systems: Scanners, tractor beams, cloaking devices.
+	•	Special Equipment: Drones, turrets, or hacking modules.
+	•	Implementation: UI in components/UI/ShipEditor.tsx, data in game/data/shipComponents.ts.
+	•	Types:
+	•	Weapon Classes: Kinetic, Energy, Explosive, Electronic.
+	•	Shield Types: Standard, Adaptive (resists specific damage), Overcharge (temporary boost).
+	•	Functions:
+	•	equipComponent(ship: Entity, component: Component): boolean: Adds or swaps components.
+	•	upgradeComponent(ship: Entity, component: Component, resources: Resource[]): void: Enhances stats.
+	•	renderShipSprite(ship: Entity): Sprite: Combines modular sprites for display.
+	•	Details: Components have unique pixel art, with upgrades requiring specific resources.
+5. Combat System
+	•	Description: Real-time combat with:
+	•	Diverse weapons, directional shields, and enemy AI (e.g., flank, swarm, retreat).
+	•	Enemy types: Pirates, alien ships, drones, space creatures.
+	•	Implementation: Logic in systems/combat.ts, with projectile management and collision detection.
+	•	Types:
+	•	Enemies: Scout (fast, weak), Cruiser (balanced), Behemoth (slow, tanky).
+	•	Damage Types: Kinetic, Energy, Explosive, EMP.
+	•	Functions:
+	•	spawnEnemy(system: System, type: EnemyType): Entity: Creates enemies based on system difficulty.
+	•	fireWeapon(ship: Entity, weapon: Component): Projectile[]: Launches projectiles.
+	•	resolveCombat(entities: Entity[], delta: number): void: Handles collisions and damage.
+	•	Details: Combat scales with player progress, with detailed explosion animations (8-12 frames).
+6. Exploration
+	•	Description: Players explore by:
+	•	Scanning for points of interest (e.g., planets, derelicts, anomalies).
+	•	Investigating ruins, stations, or wrecks for loot, story clues, or puzzles.
+	•	Implementation: Logic in systems/exploration.ts, procedural content in assets/ (e.g., planetGenerator.ts, ruinGenerator.ts).
+	•	Types:
+	•	Points of Interest: Resource deposits, ancient ruins, derelict ships, hidden bases.
+	•	Puzzles: Sequence matching, resource allocation, or combat challenges.
+	•	Functions:
+	•	scanSystem(ship: Entity, system: System): PointOfInterest[]: Reveals interactable objects.
+	•	interactWithPOI(ship: Entity, poi: PointOfInterest): Reward: Resolves exploration events.
+	•	Details: Larger celestial bodies host complex features (e.g., multi-room ruins with traps).
+7. Trade and Missions
+	•	Description: Space stations offer:
+	•	Trading with dynamic prices based on supply/demand and faction reputation.
+	•	Missions: Story-driven (Nexus-related), procedural (delivery, combat, exploration).
+	•	Implementation: UI in components/UI/StationInterface.tsx, backend in server/ for price calculations.
+	•	Types:
+	•	Missions: Escort, bounty hunting, salvage, diplomatic.
+	•	Trade Goods: Commodities (Metals, Fuel), Luxuries (Gems), Illicit (Contraband).
+	•	Functions:
+	•	generateMissions(station: Station, player: Entity): Mission[]: Creates missions based on reputation.
+	•	executeTrade(station: Station, transaction: Transaction): void: Updates inventory and credits.
+	•	Details: Black markets offer high-risk/high-reward trades.
+8. Storyline and Factions
+	•	Description: A main storyline about “The Nexus” (an ancient artifact), with factions:
+	•	Galactic Alliance, Free Traders, Outer Rim Syndicate, Ancient Guardians.
+	•	Implementation: Story data in game/data/story.ts, state in stores/.
+	•	Types:
+	•	Factions: Lawful, Neutral, Hostile, Mysterious.
+	•	Story Events: Data logs, NPC dialogues, artifact discoveries.
+	•	Functions:
+	•	updateReputation(player: Entity, faction: Faction, delta: number): void: Adjusts faction standing.
+	•	triggerStoryEvent(player: Entity, event: StoryEvent): void: Advances narrative.
+	•	Details: Reputation affects mission availability, prices, and NPC behavior.
+9. Progression and Skills
+	•	Description: Players earn XP from missions, combat, and exploration, unlocking:
+	•	Skill Trees: Combat (weapon efficiency), Navigation (fuel efficiency), Trade (better prices), Exploration (scanner range).
+	•	Achievements: Unlock cosmetics, bonuses, or story content.
+	•	Implementation: Logic in systems/progression.ts, UI in components/UI/SkillTree.tsx.
+	•	Functions:
+	•	awardXP(player: Entity, amount: number): void: Updates player level.
+	•	unlockSkill(player: Entity, skill: Skill): void: Activates new abilities.
+
+Visual and Audio Design
+Visual Style: Detailed and Realistic Pixel Art
+The game features intricate pixel art balancing realism and retro aesthetics.
+	•	Celestial Bodies:
+	•	Planets (50-200 pixels):
+	•	Rocky: Craters, canyons, dithered shadows.
+	•	Gas Giants: Swirling clouds, storms, 3-5 color palettes.
+	•	Ice: Reflective surfaces, cracks, frosty gradients.
+	•	Volcanic: Glowing lava, ash clouds.
+	•	Additions: Rings, atmospheres, polar caps.
+	•	Stars (100-300 pixels):
+	•	Types: Blue giant, white dwarf, yellow main-sequence, red dwarf, neutron star.
+	•	Effects: Coronas, lens flares, solar flares (4-8 frames).
+	•	Colors: #3388ff, #ffffff, #ffcc33, #ff8833, #ff3366.
+	•	Asteroids (10-50 pixels): Cracks, metallic glints.
+	•	Phenomena:
+	•	Nebulae (500x500 pixels): Dithered gradients (purple-blue, red-orange).
+	•	Black Holes: Dark cores, accretion disks, distortion effects.
+	•	Pulsars: Periodic light bursts.
+	•	Ships (30-60 pixels):
+	•	Design: Modular, futuristic.
+	•	Details: Hulls with rivets, animated engines (4-6 frames), weapon firing effects.
+	•	Techniques: Dithering for metallic textures, 2px outlines.
+	•	Background:
+	•	Base: Deep black (#050510).
+	•	Parallax Stars: Small (1px, #ffffff), medium (2px, #0a0a20), large (3px, #101035).
+	•	Dynamic: Twinkling stars, shooting stars (6-8 frames), space dust.
+	•	Phenomena: Nebulae, pulsar flashes, wormhole glows.
+	•	Technical Details:
+	•	Palette: 3-5 colors per object, expanded with dithering.
+	•	Resolution: 320x180, scaled up for pixel-perfect rendering.
+	•	Animations: 4-12 frames for effects (e.g., explosions, shield impacts).
+	•	Implementation: PixiJS in systems/render.ts, sprite sheets in public/images/.
+Audio
+	•	Description:
+	•	Sound Effects: Engine thrust, weapon fire, explosions, scanner pings, UI clicks.
+	•	Music: Adaptive tracks (ambient exploration, intense combat, mysterious ruins).
+	•	Implementation: Howler.js for audio management, files in public/audio/.
+	•	Functions:
+	•	playSound(effect: SoundEffect): void: Triggers audio.
+	•	updateMusic(state: GameState): void: Adjusts music based on context.
+
+Technical Implementation
+Framework and Tools
+	•	Frontend:
+	•	React: UI components in client/src/components/ (e.g., HUD.tsx, GalaxyMap.tsx).
+	•	PixiJS: Rendering in main.tsx and systems/render.ts.
+	•	TypeScript: Type safety across *.ts and *.tsx files.
+	•	State Management: Zustand in stores/gameStore.ts for galaxy, ship, and inventory.
+	•	Game Architecture: ECS in game/:
+	•	Entities: Ships, planets, projectiles.
+	•	Components: Position, Velocity, Health, Renderable.
+	•	Systems: Physics, Combat, Rendering, AI.
+	•	Utilities: Random generation, math helpers in lib/ (e.g., random.ts, vector.ts).
+Performance
+	•	Target: 60 FPS on modern browsers and mobile devices.
+	•	Optimizations:
+	•	Object pooling for projectiles and particles.
+	•	Level-of-detail (LOD) for distant objects.
+	•	PixiJS batching and sprite sheet optimization.
+	•	Quadtree or spatial partitioning for collision detection.
+	•	Functions:
+	•	optimizeRender(scene: Scene, camera: Camera): void: Adjusts detail based on distance.
+	•	manageObjects(pool: ObjectPool, entities: Entity[]): void: Reuses objects.
+Backend (Server)
+	•	Purpose: Supports:
+	•	Persistent saves (cloud-based, multiple slots).
+	•	Leaderboards for exploration/combat achievements.
+	•	Potential multiplayer (co-op exploration, PvP arenas).
+	•	Implementation: Node.js with REST or WebSocket APIs, database (e.g., MongoDB) for persistence.
+	•	Functions:
+	•	saveGame(player: Entity, slot: number): void: Stores game state.
+	•	loadGame(slot: number): GameState: Retrieves state.
+	•	updateLeaderboard(player: Entity, score: number): void: Tracks rankings.
+
+Gameplay Flow
+	1.	Start: Title screen with new game, load, settings, and leaderboard options.
+	2.	Initialization: Galaxy generates (100-150 systems), player spawns in a starting system with a basic ship.
+	3.	Exploration: Scan systems, mine resources, explore planets and ruins.
+	4.	Travel: Warp between systems, manage fuel over large distances.
+	5.	Combat: Engage enemies, earn rewards.
+	6.	Progression: Upgrade ship, trade, complete missions, advance the Nexus storyline.
+	7.	Game Over: Death triggers a roguelike reset with partial progress retention (e.g., unlocked skills).
+
+Additional Features
+	•	Dynamic Events: Random events like pirate ambushes, distress signals, or cosmic storms.
+	•	Ship Classes: Scout (fast, low armor), Fighter (balanced), Freighter (high cargo, slow).
+	•	Environmental Hazards: Radiation zones, asteroid fields, or gravity wells affecting navigation.
+	•	Companion NPCs: Hireable crew members with unique skills (e.g., engineer boosts repairs).
+	•	Modding Support: Allow community-created ships, missions, or systems via JSON configs.
+
+Development Roadmap
+	1.	Prototype: Core loop (movement, combat, galaxy generation), placeholder visuals.
+	2.	Alpha: Full systems, temporary pixel art, basic story.
+	3.	Beta: Detailed visuals, polished mechanics, multiplayer testing.
+	4.	Launch: Complete content, optimized performance, cloud saves.
+	5.	Post-Launch: Expansions (new factions, sectors), modding tools.
+
+Summary of Key Features
+	•	Graphics/Visuals: Intricate, realistic pixel art with detailed celestial bodies (50-300 pixels), modular ships, and dynamic backgrounds (twinkling stars, nebulae).
+	•	Star Systems: 100-150 systems with realistic spacing (500-2000 pixels), larger bodies, and diverse phenomena.
+	•	Controls: Cross-platform (PC: WASD/mouse/gamepad, Mobile: touch joysticks/gestures), customizable.
+	•	Scale and Depth: Vast galaxy with deep mechanics (factions, skills, dynamic events), balanced for casual and hardcore players.
+	•	Technical: ECS architecture, PixiJS/React/TypeScript, optimized for 60 FPS, with server support for persistence and potential multiplayer.
+This comprehensive guide equips an AI agent to develop “Galaxy Wanderer” as a visually stunning, expansive, and accessible roguelike, merging the “Star Dust Voyager” foundation with enhanced specifications. Let me know if you need a deeper focus on any mechanic, visual style, or implementation detail!
