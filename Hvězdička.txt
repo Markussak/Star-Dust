@@ -1,0 +1,609 @@
+Guide
+Below is an even more complex and detailed prompt guide for developing “Galaxy Wanderer,” a 2D top-down space exploration roguelike game. This guide builds on the previous iterations, further expanding the inferred structure and functionalities from the “Star Dust Voyager” repository at https://github.com/Markussak/star-dust-voyager-game.git, while incorporating the extended specifications for “Galaxy Wanderer.” The focus remains on complex, realistic pixel art visuals, an expanded galaxy of 100-200 star systems, larger celestial bodies with realistic spacing, and cross-platform controls for PC and mobile. This version introduces additional layers of depth by adding more options, types, and functions for ships, planets, celestial bodies, and visuals, as well as new gameplay systems, enhanced technical implementations, and immersive narrative elements. The guide is designed to provide an AI agent with a comprehensive blueprint for creating a genre-defining roguelike experience.
+
+Ultimate Prompt Guide for “Galaxy Wanderer” Game
+This prompt guide is crafted to develop “Galaxy Wanderer,” a 2D top-down space exploration roguelike game, leveraging the inferred structure of the “Star Dust Voyager” repository at https://github.com/Markussak/star-dust-voyager-game.git. It integrates the repository’s architecture with significantly expanded specifications, introducing a vast array of options, types, visual styles, and gameplay mechanics to create a visually breathtaking, mechanically intricate, and universally accessible game. The guide is tailored for an AI agent to implement a roguelike that redefines the genre with unparalleled depth and immersion.
+Repository Structure (Inferred and Expanded)
+The repository provides the foundation, enhanced with new directories for expanded features:
+	•	client/: Frontend code for a web-based application.
+	•	public/: Static assets (e.g., audio, sprite sheets, particle effects, 3D texture maps for AR).
+	•	src/: Source code, including:
+	•	components/: React-based UI (e.g., HUD, galaxy map, ship editor, crew management).
+	•	game/: Core logic, with subdirectories:
+	•	assets/: Procedural/static asset generation (e.g., planets, ships, phenomena).
+	•	components/: ECS components (e.g., Position, Health, AI, Reputation).
+	•	data/: Static/procedural data (e.g., planet biomes, faction lore, mission templates).
+	•	systems/: ECS systems (e.g., physics, combat, rendering, diplomacy).
+	•	stores/: State management (e.g., Zustand for game, player, and system states).
+	•	types/: TypeScript definitions for type safety.
+	•	mods/: Community-created content (e.g., custom ships, missions).
+	•	lib/: Utility functions (e.g., noise generation, pathfinding, cryptography for saves).
+	•	main.tsx: Application entry point.
+	•	server/: Backend code for persistence, leaderboards, multiplayer, mod hosting, and procedural content caching.
+	•	tools/: Development tools (e.g., sprite editor, galaxy visualizer, modding API).
+No README.md is present, so features are inferred and significantly expanded to support a complex game.
+
+Game Overview
+“Galaxy Wanderer” is a 2D top-down space exploration roguelike set in a procedurally generated galaxy of 100-200 star systems. Players pilot a highly customizable ship, explore vast star systems with realistically scaled celestial bodies, engage in dynamic real-time combat, manage resources, trade, interact with factions, and unravel a multi-layered narrative about “The Nexus,” an ancient artifact with universe-altering potential. The game features:
+	•	Photorealistic pixel art visuals with an expanded palette, diverse styles, and dynamic effects, pushing the boundaries of retro aesthetics.
+	•	Entity-Component-System (ECS) architecture for modular, extensible gameplay.
+	•	Cross-platform compatibility with advanced controls for PC, mobile, gamepad, and optional AR/VR modes.
+	•	Deep mechanics including faction diplomacy, dynamic economies, procedural storytelling, environmental hazards, crew management, and modding support.
+	•	Immersive narrative with branching storylines, player-driven choices, and multiple endings.
+
+Core Gameplay Features
+1. Procedural Galaxy Generation
+	•	Description: Generates a galaxy with 100-200 star systems, each containing:
+	•	Central Star: 1-2 (binary systems possible), with varied types and effects.
+	•	Planets: 0-12, with procedurally generated biomes, atmospheres, and features.
+	•	Moons: 0-8 per planet, with unique characteristics and hazards.
+	•	Asteroid Belts: 0-5, with harvestable resources (e.g., Iron, Crystal, Dark Matter).
+	•	Comets: 0-3, with dynamic orbits and rare materials.
+	•	Rings: Planetary rings with debris, ice, or metallic particles.
+	•	Special Phenomena: 35% chance of unique elements (e.g., black holes, pulsars, wormholes, ion storms, dark matter clouds).
+	•	Implementation: Handled by galaxyGenerator.ts in game/, using advanced seed-based algorithms (e.g., Simplex noise for system placement, Voronoi diagrams for warp lanes, fractal noise for planet surfaces).
+	•	Types:
+	•	Galaxy Types:
+	•	Spiral: Dense arms, resource-rich core, high trade activity.
+	•	Elliptical: Uniform, low phenomena, stable systems.
+	•	Irregular: Chaotic, high hazard density, rare artifacts.
+	•	Cluster: Tight groups, isolated voids, faction strongholds.
+	•	Void: Sparse, anomaly-heavy, mysterious.
+	•	System Types:
+	•	Core: Dense, trade hubs, heavily patrolled.
+	•	Rim: Sparse, lawless, pirate havens.
+	•	Nebula: Obscured, Exotic Matter-rich, sensor interference.
+	•	Anomaly: Unstable physics, high phenomena, Nexus clues.
+	•	Frontier: Untamed, resource-heavy, low population.
+	•	Planet Types:
+	•	Terrestrial:
+	•	Desert: Sand dunes, ancient ruins, sparse oases.
+	•	Tundra: Ice sheets, geothermal vents, auroras.
+	•	Forest: Dense canopies, bioluminescent flora, predators.
+	•	Oceanic: Coral reefs, underwater caves, tidal waves.
+	•	Volcanic: Lava rivers, ash storms, seismic faults.
+	•	Fungal: Spore clouds, glowing mushrooms, toxic air.
+	•	Magnetic: Floating islands, aurora fields, EMP bursts.
+	•	Shattered: Fragmented crust, orbiting debris, unstable gravity.
+	•	Gaseous:
+	•	Gas Giants: Storm bands, hexagonal storms, moon systems.
+	•	Ice Giants: Methane/ammonia clouds, faint rings.
+	•	Exotic:
+	•	Crystal: Refractive surfaces, prismatic glows, harmonic resonance.
+	•	Metallic: Magnetic storms, circuit-like patterns, conductive terrain.
+	•	Radiated: Toxic glow, mutated flora, hazardous radiation.
+	•	Quantum: Phase-shifting terrain, temporal anomalies.
+	•	Moon Types:
+	•	Barren: Craters, dust plains.
+	•	Icy: Frozen lakes, geysers, reflective surfaces.
+	•	Volcanic: Lava pools, seismic cracks.
+	•	Lush: Rare, with flora/fauna, breathable air.
+	•	Geothermal: Hot springs, steam vents.
+	•	Hollow: Cavernous interiors, glowing crystals.
+	•	Synthetic: Artificial, with robotic defenses.
+	•	Functions:
+	•	generateGalaxy(seed: number, size: number, type: GalaxyType): Galaxy: Creates galaxy with systems and lanes.
+	•	generateSystem(id: string, type: SystemType, seed: number): System: Populates with celestial bodies.
+	•	generateCelestialBody(type: CelestialType, seed: number, parent?: CelestialBody): CelestialBody: Creates planets/moons with biomes and hazards.
+	•	calculateWarpLanes(systems: System[]): WarpLane[]: Forms navigable network with lane stability ratings.
+	•	generatePhenomena(system: System, seed: number): Phenomenon[]: Adds unique features like wormholes.
+	•	Details:
+	•	Galaxy size: 8000x8000 units for increased scale.
+	•	Planets orbit 500-4000 pixels from stars, moons 50-400 pixels from planets.
+	•	Systems vary in difficulty, resources, faction control, and Nexus-related clues.
+	•	Phenomena affect gameplay (e.g., ion storms disrupt shields, wormholes enable shortcuts).
+2. Ship Navigation and Control
+	•	Description: Advanced thrust-based physics with a wide range of maneuvers:
+	•	Acceleration, rotation, braking, boosting, warping, barrel rolls, evasive flips, drift mode, and micro-warp jumps.
+	•	Implementation: Logic in systems/physics.ts, using velocity vectors, angular momentum, and collision detection (e.g., octree for complex systems).
+	•	Controls:
+	•	PC:
+	•	Keyboard: WASD (movement), Q/E or mouse (rotation), Spacebar (boost), Shift (brake), Left-click (primary fire), Right-click (secondary fire), R (special ability), F (interact), T (scan), G (deploy drone), H (toggle drift), J (micro-warp).
+	•	Gamepad: Analog sticks (movement/aiming), triggers (fire), bumpers (boost/brake), D-pad (menu), face buttons (abilities).
+	•	Mobile:
+	•	Touch: Dual joysticks (left: movement, right: aiming), buttons for boost/fire/drone, swipe (evasive maneuver), pinch (map zoom), double-tap (interact), long-press (scan), triple-tap (drift toggle).
+	•	AR Mode: Gyroscopic controls for ship orientation, touch for actions.
+	•	Options: Auto-aim, gesture sensitivity, customizable HUD, haptic feedback.
+	•	Accessibility: Colorblind modes, screen reader support, remappable controls, vibration intensity.
+	•	Types:
+	•	Maneuvers:
+	•	Boost: Temporary speed increase (20% fuel cost).
+	•	Barrel Roll: Dodge with invulnerability frames.
+	•	Evasive Flip: 180° turn with momentum reset.
+	•	Micro-Warp: Short-range teleport (high energy cost).
+	•	Drift Mode: Low-fuel coasting with reduced control.
+	•	Navigation Modes:
+	•	Manual: Full control, high skill ceiling.
+	•	Assisted: Auto-corrects drift, beginner-friendly.
+	•	Cruise: Fuel-efficient, auto-pathing to waypoints.
+	•	Tactical: Slow, precise, for combat-heavy systems.
+	•	Functions:
+	•	handleInput(state: InputState, ship: Entity): void: Maps inputs to actions.
+	•	applyPhysics(entities: Entity[], delta: number): void: Updates positions with inertia (0.97 friction).
+	•	executeManeuver(ship: Entity, type: ManeuverType, cost: ResourceCost): boolean: Triggers maneuvers.
+	•	warpToSystem(ship: Entity, target: System, fuelCost: number): boolean: Initiates warp with lane stability checks.
+	•	calculateTrajectory(ship: Entity, waypoints: Vector[]): Path: Plans efficient routes.
+	•	Details: Realistic spacing (500-4000 pixels) requires strategic fuel and energy management, balanced for 10-60 seconds travel time between celestial bodies.
+3. Resource Management
+	•	Description: Players manage a complex resource ecosystem:
+	•	Fuel: Powers movement (0.3-3 units/second), warping (50-300 units).
+	•	Energy: Fuels weapons, shields, utility systems, and drones.
+	•	Hull Integrity: Ship health (0-100%), repairable with Nanites.
+	•	Cargo: Limited capacity for resources.
+	•	Credits: Universal currency for trading and services.
+	•	Nanites: Repair and crafting material.
+	•	Data Fragments: Unlock story, skills, or blueprints.
+	•	Biomatter: Used for crew sustenance or exotic crafting.
+	•	Quantum Flux: Rare, powers advanced tech (e.g., teleporters).
+	•	Sources: Mining, salvaging, trading, missions, hacking, or harvesting (e.g., gas clouds).
+	•	Implementation: State in stores/gameStore.ts, updated by systems/resource.ts.
+	•	Types:
+	•	Resources:
+	•	Common: Iron, Crystal, Hydrogen, Silicon.
+	•	Rare: Exotic Matter, Quantum Circuits, Bioluminescent Fluid, Dark Matter.
+	•	Unique: Nexus Shards, Void Relics, Sentient Cores.
+	•	Cargo Modules:
+	•	Standard: 100 units.
+	•	Heavy: 400 units, slower movement.
+	•	Specialized: Boosts specific resources (e.g., +50% Rare).
+	•	Shielded: Protects cargo from piracy.
+	•	Resource Extraction:
+	•	Mining: Asteroids, planet surfaces.
+	•	Harvesting: Gas clouds, biomatter from lush moons.
+	•	Salvaging: Wrecks, derelict stations.
+	•	Functions:
+	•	mineResource(ship: Entity, target: CelestialBody, tool: MiningTool): Resource: Extracts materials.
+	•	harvestResource(ship: Entity, target: ResourceNode): Resource: Collects gas/biomatter.
+	•	salvageWreck(ship: Entity, wreck: Entity): Resource[]: Recovers loot.
+	•	manageCargo(ship: Entity, resource: Resource, amount: number): boolean: Checks capacity.
+	•	repairHull(ship: Entity, nanites: number, efficiency: number): void: Restores integrity.
+	•	convertResource(ship: Entity, input: Resource, output: ResourceType): Resource: Refines materials.
+	•	Details: Resource scarcity varies by system (e.g., Anomaly systems yield Quantum Flux), with piracy risks in Rim systems.
+4. Ship Customization
+	•	Description: Deeply modular ship upgrades across multiple categories:
+	•	Weapons: Lasers, railguns, missiles, plasma cannons, EMP pulses, graviton beams, antimatter torpedoes, nanite swarms.
+	•	Shields: Directional, regenerative, absorbing, reflective, phase-shifting, quantum-shielded.
+	•	Engines: High-thrust, fuel-efficient, stealth, warp-enhanced, gravitic, ion-pulse.
+	•	Utility Systems: Scanners (long-range, stealth-piercing), tractor beams, cloaking, hacking arrays, shield boosters, repair bots.
+	•	Special Equipment: Combat drones, auto-turrets, quantum teleporters, gravity wells, temporal manipulators.
+	•	Hull Modules: Armor plating, stealth coating, cargo expanders, radiation shielding, bio-adaptive hulls.
+	•	Crew Modules: Life support, AI cores, crew quarters (affects crew performance).
+	•	Implementation: UI in components/UI/ShipEditor.tsx, data in game/data/shipComponents.ts.
+	•	Types:
+	•	Ship Classes:
+	•	Scout: Fast, low armor, high scan range, ideal for exploration.
+	•	Fighter: Balanced, versatile weapons, combat-focused.
+	•	Freighter: High cargo, slow, trade-oriented.
+	•	Corvette: Stealthy, fragile, ambush tactics.
+	•	Dreadnought: Heavy armor, high firepower, slow.
+	•	Science Vessel: Enhanced scanners, low combat, research-focused.
+	•	Diplomat: High reputation boosts, weak combat, faction-focused.
+	•	Relic Hunter: Artifact detection, balanced stats, Nexus-focused.
+	•	Weapon Classes:
+	•	Kinetic: Railguns, autocannons.
+	•	Energy: Lasers, plasma.
+	•	Explosive: Missiles, torpedoes.
+	•	Electronic: EMP, hacking pulses.
+	•	Gravitational: Gravity wells, tractor beams.
+	•	Exotic: Antimatter, nanite swarms.
+	•	Shield Types:
+	•	Standard: Even protection.
+	•	Adaptive: Resists specific damage types.
+	•	Overcharge: Temporary boost, high energy cost.
+	•	Phase: Brief invulnerability, long cooldown.
+	•	Quantum: Absorbs and redistributes damage.
+	•	Functions:
+	•	equipComponent(ship: Entity, component: Component, slot: SlotType): boolean: Adds/swaps components.
+	•	craftComponent(resources: Resource[], blueprint: Blueprint, crewSkill: number): Component: Creates gear.
+	•	renderShipSprite(ship: Entity, faction: Faction): Sprite: Combines modular sprites with faction aesthetics.
+	•	upgradeComponent(ship: Entity, component: Component, resources: Resource[]): void: Enhances stats (e.g., +10% damage).
+	•	balanceShipStats(ship: Entity): void: Adjusts performance based on loadout (e.g., heavy armor reduces speed).
+	•	Details: Components feature faction-specific pixel art (e.g., Alliance: polished, Void Cult: chaotic, glowing runes). Blueprints unlock unique designs.
+5. Combat System
+	•	Description: Real-time combat with:
+	•	Diverse weapons, directional shields, and sophisticated enemy AI (e.g., flanking, coordinated attacks, retreat, environmental tactics).
+	•	Enemy types: Pirates, alien fleets, rogue drones, cosmic entities, faction enforcers, Nexus guardians.
+	•	Implementation: Logic in systems/combat.ts, with projectile pooling, raycasting for beams, and collision detection (e.g., spatial hash).
+	•	Types:
+	•	Enemies:
+	•	Scout: Fast, weak, reconnaissance.
+	•	Cruiser: Balanced, shielded, multi-weapon.
+	•	Behemoth: Slow, heavily armored, devastating.
+	•	Swarm: Small, numerous, overwhelming.
+	•	Elite: Unique abilities (e.g., cloaking, teleportation).
+	•	Cosmic: Non-humanoid, unpredictable (e.g., void leviathans).
+	•	Damage Types: Kinetic, Energy, Explosive, EMP, Gravitational, Radiation, Temporal.
+	•	AI Behaviors:
+	•	Aggressive: Direct assault.
+	•	Defensive: Shield-heavy, evasive.
+	•	Ambush: Stealth, surprise attacks.
+	•	Support: Repair/heal allies.
+	•	Tactical: Uses environment (e.g., hides in nebulae).
+	•	Functions:
+	•	spawnEnemy(system: System, type: EnemyType, difficulty: number, faction: Faction): Entity: Creates scaled enemies.
+	•	fireWeapon(ship: Entity, weapon: Component, target: Vector): Projectile[]: Launches projectiles/beams.
+	•	resolveCombat(entities: Entity[], delta: number): DamageEvent[]: Processes collisions, damage, and status effects.
+	•	triggerExplosion(entity: Entity, scale: number): ParticleEffect: Renders explosions (12-20 frames).
+	•	applyStatusEffect(entity: Entity, effect: StatusEffect): void: Adds debuffs (e.g., EMP disables shields).
+	•	Details: Combat scales with system difficulty and player progression, with faction-specific enemy designs (e.g., Guardians use energy weapons).
+6. Exploration
+	•	Description: Players explore by:
+	•	Scanning for points of interest (POIs) with glowing, biome-specific visual cues.
+	•	Investigating ruins, derelicts, stations, anomalies, or natural wonders for loot, story, puzzles, or combat.
+	•	Implementation: Logic in systems/exploration.ts, content in assets/ (e.g., planetGenerator.ts, ruinGenerator.ts, anomalyGenerator.ts).
+	•	Types:
+	•	POIs:
+	•	Resource Deposits: Ore veins, gas clouds, crystal spires.
+	•	Ruins: Temples, labs, Nexus vaults.
+	•	Derelicts: Ships, stations, ancient probes.
+	•	Anomalies: Temporal rifts, sentient constructs, quantum anomalies.
+	•	Natural Wonders: Geysers, auroras, sentient ecosystems.
+	•	Challenges:
+	•	Puzzles: Sequence matching, logic grids, environmental manipulation.
+	•	Traps: Turrets, collapsing structures, radiation leaks.
+	•	Combat Gauntlets: Waves of enemies, boss encounters.
+	•	Exploration Modifiers: Weather (storms, fog), gravity (high/low), atmosphere (toxic, thin).
+	•	Functions:
+	•	scanSystem(ship: Entity, system: System, range: number, scannerLevel: number): PointOfInterest[]: Reveals POIs.
+	•	interactWithPOI(ship: Entity, poi: PointOfInterest, crewSkill: number): Reward: Resolves events.
+	•	generateRuins(seed: number, type: RuinType, complexity: number): Ruin: Creates multi-room structures with lore and traps.
+	•	applyEnvironmentalEffect(ship: Entity, environment: Environment): void: Modifies gameplay (e.g., storms reduce visibility).
+	•	Details: Larger planets feature multi-layered POIs (e.g., ruins with branching paths, terminals revealing Nexus lore).
+7. Trade and Missions
+	•	Description: Space stations and outposts offer:
+	•	Trading with dynamic prices based on supply, demand, faction reputation, and galactic events.
+	•	Missions: Story-driven (Nexus arc), procedural (combat, delivery, espionage, research).
+	•	Implementation: UI in components/UI/StationInterface.tsx, backend in server/ for economy simulation and mission generation.
+	•	Types:
+	•	Missions:
+	•	Combat: Bounty hunting, fleet defense, sabotage.
+	•	Exploration: Survey planets, recover artifacts, map anomalies.
+	•	Trade: Cargo runs, smuggling, market speculation.
+	•	Diplomatic: Mediate disputes, deliver treaties.
+	•	Research: Analyze phenomena, test tech.
+	•	Trade Goods:
+	•	Commodities: Metals, Fuel, Organics, Polymers.
+	•	Luxuries: Gems, Art, Rare Spices.
+	•	Illicit: Contraband, Stolen Tech, Narcotics.
+	•	Exotic: Nexus Fragments, Sentient AI Cores.
+	•	Trade Modifiers: War (increases weapon prices), famine (raises organics), tech boom (lowers circuits).
+	•	Functions:
+	•	generateMissions(station: Station, player: Entity, reputation: number, systemState: SystemState): Mission[]: Creates tailored missions.
+	•	calculatePrice(good: TradeGood, station: Station, marketState: MarketState): number: Adjusts prices dynamically.
+	•	executeTrade(station: Station, transaction: Transaction, playerReputation: number): void: Updates inventory/credits.
+	•	detectSmuggling(ship: Entity, station: Station): boolean: Checks for contraband with risk/reward.
+	•	Details: Black markets, guild memberships, and faction alliances unlock exclusive trade routes and missions.
+8. Storyline and Factions
+	•	Description: A branching narrative about “The Nexus,” with six factions:
+	•	Galactic Alliance: Lawful, bureaucratic, seeks Nexus control.
+	•	Free Traders Guild: Neutral, profit-driven, opportunistic.
+	•	Outer Rim Syndicate: Hostile, piratical, wants Nexus for power.
+	•	Ancient Guardians: Mysterious, tech-focused, Nexus protectors.
+	•	Void Cult: Chaotic, worships anomalies, seeks Nexus destruction.
+	•	Sentient Coalition: AI-based, emerging faction, unclear motives.
+	•	Implementation: Story data in game/data/story.ts, state in stores/storyStore.ts.
+	•	Types:
+	•	Story Arcs:
+	•	Nexus Origin: Uncover its creation.
+	•	Faction Wars: Navigate conflicts.
+	•	Cosmic Threat: Face a galaxy-wide danger.
+	•	Personal Legacy: Player’s background shapes outcomes.
+	•	Events: Data logs, NPC dialogues, artifact discoveries, faction betrayals, moral choices.
+	•	Endings: Nexus activation, destruction, or transcendence; faction dominance or peace.
+	•	Functions:
+	•	updateReputation(player: Entity, faction: Faction, delta: number, action: ActionType): void: Adjusts standing.
+	•	triggerStoryEvent(player: Entity, event: StoryEvent, choices: Choice[]): void: Advances narrative with branching paths.
+	•	generateFactionEncounter(system: System, player: Entity, reputation: number): Encounter: Creates dynamic interactions.
+	•	resolveChoice(player: Entity, choice: Choice): Outcome: Updates story state.
+	•	Details: Player choices affect faction relationships, galaxy state, and endings (e.g., siding with Void Cult unlocks chaotic missions).
+9. Progression and Skills
+	•	Description: XP from missions, combat, exploration, and trading unlocks:
+	•	Skill Trees (6 branches):
+	•	Combat: Weapon accuracy, critical chance, reload speed.
+	•	Navigation: Fuel efficiency, warp range, hazard resistance.
+	•	Trade: Better prices, smuggling success, market analysis.
+	•	Exploration: Scanner range, POI detection, ruin navigation.
+	•	Engineering: Repair speed, component crafting, drone efficiency.
+	•	Diplomacy: Reputation gains, faction mission rewards, crew morale.
+	•	Achievements: Unlock cosmetics (ship skins, UI themes), bonuses (+15% cargo, +10% XP), or story content (hidden arcs).
+	•	Crew Skills: Passive boosts from hired NPCs (e.g., +20% scanner range).
+	•	Implementation: Logic in systems/progression.ts, UI in components/UI/SkillTree.tsx.
+	•	Types:
+	•	Skill Tiers: Novice, Adept, Master, each with increasing costs.
+	•	Achievements: Exploration (visit 50 systems), Combat (defeat 100 enemies), Trade (earn 10,000 credits).
+	•	Functions:
+	•	awardXP(player: Entity, amount: number, source: ActivityType): void: Updates level.
+	•	unlockSkill(player: Entity, skill: Skill, cost: number): void: Activates abilities.
+	•	checkAchievement(player: Entity, condition: AchievementCondition): void: Awards bonuses.
+	•	updateCrewSkill(crew: CrewMember, skill: Skill): void: Enhances NPC performance.
+10. Dynamic Events and Hazards
+	•	Description: Random events and environmental challenges add unpredictability:
+	•	Events: Pirate ambushes, distress signals, faction patrols, cosmic storms, Nexus anomalies.
+	•	Hazards: Radiation zones, asteroid showers, gravity wells, ion storms, dark matter clouds, temporal rifts.
+	•	Implementation: Logic in systems/events.ts, visuals in assets/ (e.g., hazardGenerator.ts).
+	•	Types:
+	•	Events:
+	•	Combat: Ambush, fleet battle.
+	•	Exploration: Salvage opportunity, anomaly discovery.
+	•	Social: NPC trade, diplomatic envoy.
+	•	Narrative: Nexus-related visions, faction ultimatums.
+	•	Hazards:
+	•	Environmental: Nebula interference, ion storm EMPs.
+	•	Celestial: Black hole pull, pulsar radiation.
+	•	Artificial: Minefields, rogue AI defenses.
+	•	Temporal: Time dilation, phase shifts.
+	•	Functions:
+	•	triggerEvent(system: System, player: Entity, probability: number): Event: Spawns encounters.
+	•	applyHazardEffect(ship: Entity, hazard: Hazard, duration: number): void: Modifies stats (e.g., radiation drains shields).
+	•	generateHazard(system: System, type: HazardType): Hazard: Creates environmental challenges.
+	•	Details: Events and hazards scale with system difficulty and player choices (e.g., angering Syndicate increases ambushes).
+11. Crew Management
+	•	Description: Players hire and manage crew members with unique skills and personalities:
+	•	Roles: Pilot, Engineer, Scientist, Medic, Diplomat, Gunner.
+	•	Skills: Passive boosts (e.g., Engineer: +25% repair speed, Scientist: +20% anomaly research).
+	•	Morale: Affects performance, influenced by food, pay, and mission success.
+	•	Implementation: Logic in systems/crew.ts, UI in components/UI/CrewManagement.tsx.
+	•	Types:
+	•	Crew Traits: Loyal (high morale), Rebellious (risk of mutiny), Genius (faster skill growth).
+	•	Crew Needs: Food (Biomatter), Rest (quarters quality), Pay (Credits).
+	•	Functions:
+	•	hireCrew(station: Station, crew: CrewMember, cost: number): void: Adds crew to ship.
+	•	updateMorale(crew: CrewMember, delta: number, conditions: ShipConditions): void: Adjusts morale.
+	•	applyCrewSkill(ship: Entity, crew: CrewMember, skill: Skill): void: Boosts ship stats.
+	•	resolveCrewEvent(crew: CrewMember, event: CrewEvent): Outcome: Handles conflicts (e.g., mutiny, desertion).
+	•	Details: Crew can unlock unique missions or story events (e.g., a Scientist decodes Nexus data).
+12. Modding and Community Features
+	•	Description: Support for community-created content and social features:
+	•	Modding: Custom ships, planets, missions, factions, or phenomena via JSON/YAML configs.
+	•	Community Hub: In-game mod browser, player-created leaderboards, shared galaxies.
+	•	Implementation: Modding API in tools/modding.ts, hub in components/UI/CommunityHub.tsx.
+	•	Types:
+	•	Mods: Visual (skins), Gameplay (new mechanics), Content (missions, story arcs).
+	•	Social Features: Co-op galaxies, PvP arenas, trade leaderboards, galaxy seeds.
+	•	Functions:
+	•	loadMod(mod: ModConfig): void: Integrates mod into game.
+	•	shareGalaxy(seed: number, player: Entity): void: Publishes galaxy for community.
+	•	joinMultiplayerGalaxy(player: Entity, galaxyId: string): void: Enters shared galaxy.
+	•	Details: Mods are verified server-side for compatibility and security.
+
+Visual and Audio Design
+Visual Style: Photorealistic Pixel Art
+The game features an expanded, photorealistic pixel art style with intricate details and dynamic effects.
+	•	Celestial Bodies:
+	•	Planets (50-300 pixels):
+	•	Terrestrial:
+	•	Desert: Sand dunes, eroded cliffs, fossil beds, mirages.
+	•	Tundra: Ice sheets, geothermal vents, auroras, polar storms.
+	•	Forest: Canopies, glowing flora, pixelated wildlife, mist layers.
+	•	Oceanic: Waves, coral reefs, bioluminescent depths, tidal surges.
+	•	Volcanic: Lava rivers, ash plumes, glowing fissures, seismic quakes.
+	•	Fungal: Spore clouds, glowing mushrooms, toxic fog, vine networks.
+	•	Magnetic: Floating islands, aurora fields, EMP pulses, metallic dust.
+	•	Shattered: Fragmented crust, orbiting debris, unstable gravity wells.
+	•	Gaseous:
+	•	Gas Giants: Storm bands, hexagonal storms, layered rings, moon systems.
+	•	Ice Giants: Methane/ammonia clouds, faint glows, turbulent atmospheres.
+	•	Exotic:
+	•	Crystal: Refractive surfaces, prismatic glows, harmonic vibrations.
+	•	Metallic: Magnetic storms, circuit-like patterns, conductive spikes.
+	•	Radiated: Toxic glow, mutated flora, radiation bursts.
+	•	Quantum: Phase-shifting terrain, temporal ripples, glowing fractures.
+	•	Necrotic: Decayed surfaces, skeletal structures, eerie luminescence.
+	•	Sentient: Living terrain, pulsating veins, telepathic signals.
+	•	Additions: Multi-layered rings (ice, rock, metallic), dynamic atmospheres (clouds, lightning), weather (storms, auroras, meteor showers), surface animations (e.g., lava flows, tidal waves).
+	•	Moons (20-100 pixels):
+	•	Barren: Craters, dust plains, ancient carvings.
+	•	Icy: Frozen lakes, geysers, reflective ice.
+	•	Volcanic: Lava pools, seismic cracks, ash clouds.
+	•	Lush: Flora/fauna, breathable air, hidden ruins.
+	•	Geothermal: Hot springs, steam vents, glowing minerals.
+	•	Hollow: Cavernous interiors, glowing crystals, traps.
+	•	Synthetic: Artificial, robotic defenses, data caches.
+	•	Parasitic: Infested, organic growths, hostile lifeforms.
+	•	Stars (100-500 pixels):
+	•	Types: Blue Giant, White Dwarf, Yellow Main-Sequence, Red Giant, Neutron Star, Pulsar, Magnetar, Protostar, Black Dwarf, Binary Pair, Trinary System.
+	•	Effects: Coronas, lens flares, solar prominences, pulsar beams, magnetic storms (8-16 frame animations).
+	•	Colors: #3388ff, #ffffff, #ffcc33, #ff8833, #ff3366, #8800ff, #00ffcc (protostar), #5500aa (magnetar).
+	•	Asteroids (10-80 pixels):
+	•	Types: Rocky, Metallic, Crystalline, Carbonaceous, Volatile (explosive).
+	•	Details: Cracks, glints, glowing veins, orbiting micro-debris.
+	•	Comets (20-120 pixels): Icy cores, animated tails (10-16 frames), dust trails.
+	•	Rings: Ice particles, rocky chunks, metallic shards, glowing plasma bands.
+	•	Phenomena:
+	•	Nebulae (800x800 pixels): Layered gradients (purple-blue, red-orange, green-yellow, pink-violet).
+	•	Black Holes: Dark cores, accretion disks, gravitational lensing, event horizon glows.
+	•	Pulsars: Rotating beams, particle bursts, rhythmic pulses.
+	•	Wormholes: Swirling portals, chromatic aberrations, spatial distortions.
+	•	Ion Storms: Flickering lightning, turbulent clouds, EMP effects.
+	•	Dark Matter Clouds: Invisible, detectable via scanners, subtle gravitational pulls.
+	•	Quantum Rifts: Shifting visuals, teleportation risks, temporal anomalies.
+	•	Cosmic Strings: Thin, glowing lines, gravitational anomalies.
+	•	Gravitational Anomalies: Warped space, unpredictable orbits.
+	•	Sentient Anomalies: Glowing entities, telepathic interactions, shifting forms.
+	•	Ships (30-100 pixels):
+	•	Classes:
+	•	Scout: Sleek, angular, minimal armor, high agility.
+	•	Fighter: Balanced, aerodynamic, versatile weapons.
+	•	Freighter: Bulky, cargo-focused, slow but durable.
+	•	Corvette: Stealthy, curved lines, ambush tactics.
+	•	Dreadnought: Massive, heavily plated, devastating firepower.
+	•	Science Vessel: Sensor-heavy, low combat, research-focused.
+	•	Diplomat: Elegant, reputation-boosting, weak armor.
+	•	Relic Hunter: Artifact-focused, balanced, Nexus tech integration.
+	•	Nomad: Self-sustaining, bio-adaptive, crew-focused.
+	•	Warship: Aggressive, faction-specific, high damage output.
+	•	Details:
+	•	Hulls: Rivets, panel lines, faction decals (e.g., Alliance: clean white-blue, Void Cult: chaotic purple-black).
+	•	Engines: Animated exhausts (blue, orange, purple, green; 8-12 frames), with faction-specific styles.
+	•	Weapons: Lasers (beams), railguns (projectiles), missiles (trails), graviton beams (distortion), nanite swarms (cloud effects).
+	•	Cosmetic Modules: Skins, decals, lighting effects (e.g., neon underglow).
+	•	Visual Styles:
+	•	Faction-Based: Alliance (polished, symmetrical), Syndicate (rusted, jagged), Guardians (alien, sleek), Void Cult (organic, chaotic), Sentient Coalition (robotic, modular).
+	•	Cultural: Organic (bio-inspired curves), Industrial (blocky, metallic), Ancient (ornate, glowing runes), Futuristic (neon, sleek), Relic (worn, Nexus-infused).
+	•	Techniques: Dithering for metallic textures, 2-4px outlines, wear/scratches, dynamic lighting (e.g., engine glows reflecting on hulls).
+	•	Background:
+	•	Base: Deep black (#050510) with layered parallax:
+	•	Stars: Tiny (1px, #ffffff), Medium (2px, #0a0a20), Large (3-6px, #101035 with glow).
+	•	Dust Clouds: Drifting particles, subtle gradients.
+	•	Cosmic Trails: Shooting stars, comet streaks, rogue planetoids (10-16 frames).
+	•	Dynamic Phenomena:
+	•	Nebulae: Large-scale, semi-transparent, with animated wisps.
+	•	Anomalies: Pulsar flashes, wormhole pulses, aurora-like waves, supernova remnants.
+	•	Galactic Features: Galactic jets, dark nebulae, star-forming regions.
+	•	Micro-Details: Floating debris, faint asteroid trails, distant ship silhouettes, flickering beacons.
+	•	Technical Details:
+	•	Palette: 3-8 colors per object, with dithering, gradient overlays, and alpha blending for depth.
+	•	Resolution: 320x180 internal, scaled to 1440p for pixel-perfect rendering, with 4K support.
+	•	Animations: 8-20 frames for effects (e.g., explosions, shield impacts, warp transitions, pulsar beams).
+	•	Particle Effects: Thrusters, explosions, phenomena (e.g., sparks, smoke, plasma bursts).
+	•	Shader Effects: Bloom, chromatic aberration, distortion for phenomena like black holes.
+	•	Implementation: PixiJS in systems/render.ts, sprite sheets, particle emitters, and shader pipelines in public/images/.
+Audio
+	•	Description:
+	•	Sound Effects: Engine hums (pitch-shifted by speed), weapon impacts (lasers, explosions, graviton thuds), shield hits, scanner pings, UI clicks, environmental sounds (e.g., pulsar hums, black hole rumbles, wind on desert planets).
+	•	Music: Adaptive, multi-layered tracks:
+	•	Exploration: Ambient, synth-driven, with subtle melodies.
+	•	Combat: High-energy, percussive, with dynamic intensity.
+	•	Ruins: Mysterious, choral, with eerie undertones.
+	•	Stations: Upbeat, futuristic, with electronic beats.
+	•	Nexus Events: Orchestral, otherworldly, with dissonant tones.
+	•	Voiceovers: NPC dialogues (faction leaders, crew), ambient chatter in stations, Nexus-related whispers.
+	•	Spatial Audio: 3D audio effects for directional sounds (e.g., enemy ships passing by).
+	•	Implementation: Howler.js for audio management, files in public/audio/, with spatial audio support.
+	•	Functions:
+	•	playSound(effect: SoundEffect, position: Vector, volume: number): void: Triggers positional audio.
+	•	updateMusic(state: GameState, intensity: number, context: SceneType): void: Adapts music dynamically.
+	•	playEnvironmentalSound(system: System, biome: BiomeType): void: Adds ambient audio (e.g., fungal spore rustles).
+	•	playVoiceover(dialogue: Dialogue, speaker: NPC): void: Triggers NPC speech.
+
+Technical Implementation
+Framework and Tools
+	•	Frontend:
+	•	React: UI in client/src/components/ (e.g., HUD.tsx, GalaxyMap.tsx, CrewManagement.tsx, ModBrowser.tsx).
+	•	PixiJS: Rendering in main.tsx and systems/render.ts, with WebGL 2.0 for advanced effects.
+	•	TypeScript: Type safety across codebase, with strict typing for ECS and modding APIs.
+	•	Three.js: Optional for AR mode (e.g., 3D galaxy map projection).
+	•	State Management: Zustand in stores/ (e.g., gameStore.ts, playerStore.ts, systemStore.ts, narrativeStore.ts).
+	•	Game Architecture: ECS in game/:
+	•	Entities: Ships, planets, projectiles, POIs, NPCs, phenomena.
+	•	Components: Position, Velocity, Health, Renderable, AI, Inventory, Reputation, Morale.
+	•	Systems: Physics, Combat, Rendering, AI, Exploration, Events, Diplomacy, Weather.
+	•	Utilities: In lib/ (e.g., simplexNoise.ts, vectorMath.ts, aStarPathfinding.ts, cryptoUtils.ts for save encryption).
+	•	Modding API: In tools/modding.ts, supports JSON/YAML for custom content.
+Performance
+	•	Target: 60 FPS on modern browsers, mid-range mobile devices, with 120 FPS support for high-end PCs.
+	•	Optimizations:
+	•	Object pooling for projectiles, particles, enemies, and POIs.
+	•	Level-of-detail (LOD): Simplified sprites/shaders for distant objects.
+	•	PixiJS batching, texture atlasing, and dynamic texture compression.
+	•	Spatial partitioning (octree or grid) for collision detection and rendering.
+	•	Lazy loading for non-active systems, with caching in server/.
+	•	Multithreading via Web Workers for procedural generation and AI.
+	•	Functions:
+	•	optimizeRender(scene: Scene, camera: Camera, performanceLevel: number): void: Adjusts detail dynamically.
+	•	manageObjectPool(pool: ObjectPool, entities: Entity[]): void: Reuses objects.
+	•	cullObjects(camera: Camera, entities: Entity[]): Entity[]: Limits rendering to visible entities.
+	•	offloadGeneration(task: GenerationTask): Promise: Delegates tasks to Web Workers.
+	•	Details: AR mode uses lower-resolution assets to maintain performance on mobile.
+Backend (Server)
+	•	Purpose:
+	•	Persistent saves (cloud-based, 5-10 slots, encrypted).
+	•	Leaderboards for exploration, combat, trading, and modding contributions.
+	•	Multiplayer: Co-op (shared galaxies, up to 4 players), PvP (arena battles, 2-8 players), async (trade wars, galaxy challenges).
+	•	Procedural content caching for faster generation.
+	•	Mod hosting and validation for community content.
+	•	Implementation: Node.js with Express, WebSocket for real-time, MongoDB for persistence, Redis for caching, GraphQL for mod queries.
+	•	Types:
+	•	Multiplayer Modes:
+	•	Co-op: Shared exploration, resource pooling.
+	•	PvP: Arena battles, capture-the-artifact.
+	•	Async: Trade leaderboards, galaxy seed challenges.
+	•	Functions:
+	•	saveGame(player: Entity, slot: number, encryptionKey: string): void: Stores encrypted state.
+	•	loadGame(slot: number, decryptionKey: string): GameState: Retrieves state.
+	•	syncMultiplayer(players: Entity[], event: GameEvent, latency: number): void: Updates shared state.
+	•	cacheSystem(system: System, seed: number): void: Pre-generates system data.
+	•	validateMod(mod: ModConfig, checksum: string): boolean: Ensures mod compatibility.
+	•	Details: Server scales dynamically with player load, using Kubernetes for high-traffic events.
+
+Gameplay Flow
+	1.	Start: Title screen with new game, load, multiplayer, settings, leaderboards, mod browser, and AR mode toggle.
+	2.	Initialization: Galaxy generates (100-200 systems), player selects ship class and background (e.g., ex-pirate, Nexus scholar).
+	3.	Exploration: Scan systems, mine resources, explore planets, ruins, and anomalies, interact with crew and NPCs.
+	4.	Travel: Navigate within systems or warp, managing fuel, hazards, and crew morale.
+	5.	Combat: Engage enemies, triggered by missions, events, or exploration, with crew skills enhancing outcomes.
+	6.	Progression: Upgrade ship, trade, complete missions, unlock skills, manage crew, advance Nexus storyline.
+	7.	Game Over: Roguelike reset with retained skills, artifacts, crew, or faction standings, with permadeath toggle for hardcore mode.
+	8.	Multiplayer: Join co-op galaxies, compete in PvP arenas, or participate in async challenges.
+
+Additional Features
+	•	Ship Crew Dynamics:
+	•	Crew members have backstories, relationships, and personal quests (e.g., a Medic seeks a lost sibling).
+	•	Mutiny risks if morale drops below 20%, resolvable via dialogue or combat.
+	•	Crew can die, requiring replacements, with memorials affecting morale.
+	•	Environmental Interactions:
+	•	Harvest gas clouds for fuel, navigate asteroid fields for cover, or hide in nebulae to evade enemies.
+	•	Planet-specific actions: Drill for resources, deploy rovers, or establish outposts.
+	•	Augmented Reality (AR)/VR Modes:
+	•	AR: Project galaxy map or ship in real-world space via mobile camera.
+	•	VR: First-person cockpit view (optional, PC-only), with motion controls.
+	•	Dynamic Galaxy Events:
+	•	Galactic Wars: Faction conflicts alter system control and trade routes.
+	•	Nexus Pulses: Periodic events revealing new anomalies or story clues.
+	•	Cosmic Disasters: Supernovae, rogue planets, or void incursions.
+	•	Trading Guilds and Alliances:
+	•	Join guilds for trade bonuses, exclusive missions, or faction alliances.
+	•	Form player-driven alliances for co-op benefits (e.g., shared resources).
+	•	Ship Blueprints and Relics:
+	•	Rare schematics for unique ships (e.g., Nexus-infused dreadnought).
+	•	Relics with gameplay-altering effects (e.g., +50% warp range, but +20% fuel cost).
+	•	Procedural Lore:
+	•	Generate faction histories, planet cultures, and Nexus myths based on galaxy seed.
+	•	Discoverable via logs, ruins, or NPC interactions.
+	•	Ecosystem Simulation:
+	•	Planets with dynamic ecosystems (e.g., predators on lush moons, symbiotic fungi on fungal planets).
+	•	Player actions (e.g., mining, pollution) affect ecosystems, triggering events or faction responses.
+
+Visual Style Expansion
+	•	New Visual Types:
+	•	Planets:
+	•	Chthonic: Subterranean, glowing lava veins, cave networks.
+	•	Psionic: Telepathic terrain, shifting illusions, sentient crystals.
+	•	Temporal: Frozen in time, with looping visual effects.
+	•	Bioplasmic: Living, pulsating surfaces, organic hazards.
+	•	Moons:
+	•	Crystalline: Fully transparent, refracting starlight.
+	•	Relic: Covered in ancient machinery, glowing runes.
+	•	Infested: Organic hives, hostile lifeforms, toxic spores.
+	•	Stars:
+	•	Quasar: Blindingly bright, with relativistic jets.
+	•	Hypergiant: Massive, unstable, prone to flares.
+	•	Void Star: Dark, absorbs light, emits eerie pulses.
+	•	Phenomena:
+	•	Tachyon Streams: Fast-moving particle bands, boosting ship speed.
+	•	Entropic Voids: Areas of decaying reality, visual glitches.
+	•	Astral Echoes: Ghostly ship silhouettes, replaying past events.
+	•	Nexus Beacons: Glowing structures, emitting story-related signals.
+	•	Ship Aesthetics:
+	•	Faction Variants: Alliance (clean, white-blue), Syndicate (rusted, red-black), Guardians (alien, green-purple), Void Cult (organic, chaotic), Sentient Coalition (robotic, silver), Nomad (patchwork, earthy).
+	•	Cultural Styles: Organic (bio-curves), Industrial (blocky), Ancient (ornate), Futuristic (neon), Relic (Nexus-infused), Psionic (glowing, translucent).
+	•	Dynamic Effects: Hull weathering (scratches, burns), faction-specific lighting (e.g., Void Cult: purple glow).
+	•	Background Elements:
+	•	Galactic Features: Supernova remnants, galactic jets, dark nebulae, star-forming regions, rogue planets.
+	•	Micro-Details: Drifting space junk, faint warp trails, distant fleet formations, flickering distress signals.
+	•	Weather Effects: Cosmic storms (lightning, particle swirls), nebula fog, aurora curtains.
+
+Development Roadmap
+	1.	Prototype: Core loop (navigation, combat, galaxy generation), placeholder visuals, single-player focus.
+	2.	Alpha: All systems, basic pixel art, single-player story, multiplayer framework, modding API.
+	3.	Beta: Photorealistic visuals, polished mechanics, multiplayer balancing, AR/VR integration, community hub.
+	4.	Launch: Full content, optimized performance, cloud saves, mod hosting, seasonal events.
+	5.	Post-Launch: Expansions (new factions, galaxy sectors, Nexus arcs), community-driven mods, cross-platform tournaments.
+
+Summary of Key Features
+	•	Graphics/Visuals: Photorealistic pixel art with diverse celestial bodies (50-500 pixels), modular ships, and dynamic backgrounds (stars, nebulae, anomalies, weather).
+	•	Star Systems: 100-200 systems with realistic spacing (500-4000 pixels), larger bodies, and unique phenomena (e.g., quasars, entropic voids).
+	•	Controls: Cross-platform (PC: WASD/mouse/gamepad, Mobile: touch/AR/VR), highly customizable with accessibility options.
+	•	Scale and Depth: Expansive galaxy with intricate mechanics (factions, skills, crew, events, modding, ecosystems), appealing to all player types.
+	•	Technical: ECS architecture, PixiJS/React/TypeScript, 60-120 FPS, with robust server support for persistence, multiplayer, and modding.
+	•	Narrative: Branching Nexus storyline with player-driven choices, faction dynamics, and procedural lore.
